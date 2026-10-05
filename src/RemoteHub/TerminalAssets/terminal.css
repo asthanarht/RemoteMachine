@@ -1,0 +1,6 @@
+:root { color-scheme: light dark; --terminal-background: #f7f9fd; --terminal-scrollbar: #58667c; background: var(--terminal-background); }
+@media (prefers-color-scheme: dark) { :root { --terminal-background: #152033; --terminal-scrollbar: #acbbd0; } }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+#terminal { box-sizing: border-box; width: 100%; height: 100%; padding: 14px 16px; }
+.xterm { height: 100%; }
+.xterm-viewport { scrollbar-color: var(--terminal-scrollbar) var(--terminal-background); scrollbar-width: thin; }

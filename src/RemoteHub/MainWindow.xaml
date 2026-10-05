@@ -1,0 +1,111 @@
+<Window x:Class="RemoteHub.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="clr-namespace:RemoteHub.Controls"
+        Title="RemoteMachine" Style="{StaticResource {x:Type Window}}" Width="1400" Height="960" MinWidth="1020" MinHeight="720" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize" Background="{DynamicResource Surface}">
+    <Window.Resources>
+        <DataTemplate x:Key="LiveSessionTemplate">
+            <Button x:Name="ResumeSessionButton" Style="{StaticResource LiveSessionButton}" Click="ResumeSessionClicked" AutomationProperties.Name="{Binding Name}" AutomationProperties.HelpText="Switch to this existing session without reconnecting">
+                <Button.ToolTip><StackPanel><TextBlock Text="{Binding Name}" FontWeight="SemiBold"/><TextBlock Text="{Binding Endpoint}" Margin="0,4,0,0"/><TextBlock Text="{Binding StateText}" Margin="0,4,0,0"/></StackPanel></Button.ToolTip>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/></Grid.ColumnDefinitions>
+                    <ui:Icon Kind="{Binding IconKind}" Width="15" Height="15" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                        <DockPanel Margin="0,4,0,0"><TextBlock Text="{Binding Protocol}" FontSize="10" Foreground="{DynamicResource Muted}" Margin="0,0,5,0"/><TextBlock Text="{Binding StateText}" Style="{StaticResource SessionStateText}" FontSize="10" TextTrimming="CharacterEllipsis"/></DockPanel>
+                    </StackPanel>
+                    <ui:Icon x:Name="ViewingMark" Grid.Column="2" Kind="Check" Stroke="{DynamicResource Accent}" Width="11" Height="11" VerticalAlignment="Center" Visibility="Hidden"/>
+                </Grid>
+            </Button>
+            <DataTemplate.Triggers><DataTrigger Binding="{Binding IsCurrentSession}" Value="True"><Setter TargetName="ViewingMark" Property="Visibility" Value="Visible"/></DataTrigger></DataTemplate.Triggers>
+        </DataTemplate>
+        <Style x:Key="LiveSessionList" TargetType="ItemsControl">
+            <Setter Property="ItemTemplate" Value="{StaticResource LiveSessionTemplate}"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ItemsControl">
+                <StackPanel>
+                    <ItemsPresenter/>
+                    <TextBlock x:Name="EmptySessions" Text="No active sessions" Visibility="Collapsed" Style="{StaticResource MutedText}" FontSize="11" Margin="8,8,0,8"/>
+                    <Button x:Name="ViewAllButton" Tag="{TemplateBinding Tag}" Click="GroupLibraryClicked" Style="{StaticResource TextButton}" HorizontalContentAlignment="Left" Padding="8,8" FontSize="10">
+                        <TextBlock Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View all {0} connections}" TextWrapping="Wrap"/>
+                    </Button>
+                </StackPanel>
+                <ControlTemplate.Triggers><Trigger Property="HasItems" Value="False"><Setter TargetName="EmptySessions" Property="Visibility" Value="Visible"/></Trigger></ControlTemplate.Triggers>
+            </ControlTemplate></Setter.Value></Setter>
+        </Style>
+    </Window.Resources>
+    <WindowChrome.WindowChrome><WindowChrome CaptionHeight="39" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="10"/></WindowChrome.WindowChrome>
+    <Border x:Name="WindowBorder" BorderBrush="{DynamicResource WindowBorder}" BorderThickness="1" Background="{DynamicResource Surface}" CornerRadius="10">
+        <Grid>
+            <Grid.RowDefinitions><RowDefinition x:Name="TitleRow" Height="39"/><RowDefinition Height="*"/><RowDefinition x:Name="StatusRow" Height="29"/></Grid.RowDefinitions>
+            <Grid x:Name="TitleChrome" Background="{DynamicResource Titlebar}">
+                <StackPanel Orientation="Horizontal" Margin="17,0" VerticalAlignment="Center"><Image x:Name="TitleLogo" Source="{StaticResource AppMark}" Width="20" Height="20" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,9,0" AutomationProperties.Name="RemoteMachine logo"/><TextBlock x:Name="TitleBrandName" Text="RemoteMachine" FontSize="11" Foreground="{DynamicResource Muted}"/></StackPanel>
+                <TextBlock x:Name="WorkspaceCaption" Text="Connected workspace" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource Muted}"/>
+                <Button x:Name="ExitFitViewButton" Content="Exit fit view" Visibility="Collapsed" Click="ExitFitViewClicked" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        WindowChrome.IsHitTestVisibleInChrome="True" Padding="10,4" MinHeight="26" FontSize="11" Background="{DynamicResource AccentSoft}" Foreground="{DynamicResource Accent}"
+                        ToolTip="Restore the session toolbar and normal layout. The remote connection stays open." AutomationProperties.Name="Exit fit view"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button x:Name="AccountButton" Click="AccountClicked" Width="40" Height="32" Margin="0,3,8,3" Padding="3" Background="Transparent" BorderThickness="0" ToolTip="{Binding WindowsAccountTooltip}" AutomationProperties.Name="Windows account and settings">
+                        <Border Width="26" Height="26" Background="{DynamicResource AvatarSurface}" CornerRadius="13"><TextBlock Text="{Binding UserInitials}" Foreground="{DynamicResource AvatarInk}" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                    </Button>
+                    <Button Click="MinimizeClicked" Width="43" Padding="10" Background="Transparent" BorderThickness="0" ToolTip="Minimize" AutomationProperties.Name="Minimize"><ui:Icon Kind="Minimize" Width="13" Height="13"/></Button>
+                    <Button Click="MaximizeClicked" Width="43" Padding="10" Background="Transparent" BorderThickness="0" ToolTip="Maximize or restore" AutomationProperties.Name="Maximize or restore"><ui:Icon Kind="Window" Width="12" Height="12"/></Button>
+                    <Button Click="CloseClicked" Width="43" Padding="10" Background="Transparent" BorderThickness="0" ToolTip="Close" AutomationProperties.Name="Close RemoteMachine"><ui:Icon Kind="Close" Width="13" Height="13"/></Button>
+                </StackPanel>
+                <Popup x:Name="AccountPopup" PlacementTarget="{Binding ElementName=AccountButton}" Placement="Custom" StaysOpen="False" AllowsTransparency="True" PreviewKeyDown="AccountPopupKeyDown" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <Border x:Name="AccountCard" Width="320" Padding="20" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource FieldBorder}" BorderThickness="1" CornerRadius="10">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,16"><Border Background="{DynamicResource AvatarSurface}" CornerRadius="20" Width="40" Height="40" Margin="0,0,12,0"><TextBlock Text="{Binding UserInitials}" Foreground="{DynamicResource AvatarInk}" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><StackPanel VerticalAlignment="Center"><TextBlock Text="{Binding DisplayName}" Foreground="{DynamicResource Ink}" FontWeight="SemiBold" FontSize="14" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding WindowsAccountLabel}" Style="{StaticResource MutedText}" Margin="0,5,0,0"/></StackPanel></DockPanel>
+                            <TextBlock x:Name="WindowsAccountName" Text="{Binding CurrentWindowsAccount.QualifiedName}" Foreground="{DynamicResource Ink}" TextWrapping="Wrap" AutomationProperties.Name="Current Windows account"/>
+                            <TextBlock Text="Your local Windows sign-in, not an Azure or remote-session sign-in. Passwords and PINs are never read or displayed." Style="{StaticResource MutedText}" TextWrapping="Wrap" LineHeight="19" Margin="0,12,0,18"/>
+                            <Button x:Name="AccountSettingsButton" Content="Settings" Click="SettingsClicked" HorizontalContentAlignment="Left"/>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions><ColumnDefinition x:Name="SidebarColumn" Width="221"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Border x:Name="SidebarChrome" Background="{DynamicResource Sidebar}" BorderBrush="{DynamicResource Line}" BorderThickness="0,0,1,0" Padding="15,25,15,0">
+                    <DockPanel LastChildFill="True">
+                        <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,14">
+                            <Button x:Name="SessionPeek" Click="ActiveSessionClicked" Padding="11,13" HorizontalContentAlignment="Stretch" Margin="0,0,0,12">
+                                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="{DynamicResource Subtle}"/><Setter Property="BorderBrush" Value="{DynamicResource Line}"/><Setter Property="Foreground" Value="{DynamicResource Muted}"/><Style.Triggers><DataTrigger Binding="{Binding HasActiveSessions}" Value="True"><Setter Property="Background" Value="{DynamicResource SuccessSurface}"/><Setter Property="BorderBrush" Value="{DynamicResource SuccessLine}"/><Setter Property="Foreground" Value="{DynamicResource Success}"/></DataTrigger></Style.Triggers></Style></Button.Style>
+                                <DockPanel><ui:Icon Kind="Chevron" DockPanel.Dock="Right" Width="13" Height="13"/><StackPanel><TextBlock Text="{Binding ActiveSessionSummary}" FontSize="12" FontWeight="SemiBold"/><TextBlock Text="{Binding ActiveSessionName}" FontSize="11" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/></StackPanel></DockPanel>
+                            </Button>
+                            <Button x:Name="SettingsNav" Style="{StaticResource NavButton}" Click="SettingsClicked"><StackPanel Orientation="Horizontal"><ui:Icon Kind="Settings" Margin="0,0,11,0"/><TextBlock Text="Settings"/></StackPanel></Button>
+                            <Button x:Name="HelpNav" Style="{StaticResource NavButton}" Click="GuideClicked"><StackPanel Orientation="Horizontal"><ui:Icon Kind="Help" Margin="0,0,11,0"/><TextBlock Text="Help and diagnostics"/></StackPanel></Button>
+                        </StackPanel>
+                        <ScrollViewer x:Name="SidebarScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel Margin="0,0,0,8">
+                            <Button x:Name="BrandHome" Background="Transparent" BorderThickness="0" Padding="5,0" HorizontalContentAlignment="Left" Click="HomeClicked" AutomationProperties.Name="RemoteMachine Home">
+                                <StackPanel Orientation="Horizontal"><Image x:Name="SidebarLogo" Source="{StaticResource AppMark}" Width="32" Height="32" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,7,0"/><TextBlock x:Name="SidebarBrandName" Text="RemoteMachine" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/></StackPanel>
+                            </Button>
+                            <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="8" Margin="4,29,4,25" Padding="9">
+                                <DockPanel><Border Background="{DynamicResource AccentSoft}" CornerRadius="7" Width="30" Height="30" Margin="0,0,9,0"><TextBlock Text="{Binding WorkspaceInitial}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Accent}" FontWeight="SemiBold"/></Border><StackPanel><TextBlock Text="{Binding WorkspaceName}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding WorkspaceName}"/><TextBlock Text="{Binding WorkspaceLabel}" FontSize="11" Foreground="{DynamicResource Muted}" Margin="0,4,0,0"/></StackPanel></DockPanel>
+                            </Border>
+                            <Button x:Name="HomeNav" Style="{StaticResource NavButton}" Click="HomeClicked"><StackPanel Orientation="Horizontal"><ui:Icon Kind="Home" Margin="0,0,11,0"/><TextBlock Text="Home"/></StackPanel></Button>
+                            <Button x:Name="ConnectionsNav" Style="{StaticResource NavButton}" Click="ConnectionsClicked"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding ConnectionCount}" Foreground="{DynamicResource Muted}" FontSize="11"/><StackPanel Orientation="Horizontal"><ui:Icon Kind="Grid" Margin="0,0,11,0"/><TextBlock Text="All connections"/></StackPanel></DockPanel></Button>
+                            <Button x:Name="FavoritesNav" Style="{StaticResource NavButton}" Click="FavoritesClicked"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding FavoriteCount}" Foreground="{DynamicResource Muted}" FontSize="11"/><StackPanel Orientation="Horizontal"><ui:Icon Kind="Star" Margin="0,0,11,0"/><TextBlock Text="Favorites"/></StackPanel></DockPanel></Button>
+                            <Button Style="{StaticResource NavButton}" IsEnabled="False" ToolTip="Shared workspaces are not part of this local-first build."><StackPanel Orientation="Horizontal"><ui:Icon Kind="People" Margin="0,0,11,0"/><TextBlock Text="Shared with me"/></StackPanel></Button>
+                            <TextBlock Text="Your groups" FontSize="11" Foreground="{DynamicResource Muted}" Margin="12,29,0,10"/>
+                            <Expander x:Name="WorkGroupNav" Style="{StaticResource SessionGroupExpander}" AutomationProperties.Name="Work live sessions">
+                                <Expander.Header><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding WorkSessions.Count, StringFormat={}{0} live}" FontSize="10" VerticalAlignment="Center" Margin="6,0,0,0"/><StackPanel Orientation="Horizontal"><ui:Icon Kind="Folder" Margin="0,0,11,0"/><TextBlock Text="Work"/></StackPanel></DockPanel></Expander.Header>
+                                <ItemsControl x:Name="WorkSessionList" Tag="Work" ItemsSource="{Binding WorkSessions}" Style="{StaticResource LiveSessionList}"/>
+                            </Expander>
+                            <Expander x:Name="HomeGroupNav" Style="{StaticResource SessionGroupExpander}" AutomationProperties.Name="Home live sessions">
+                                <Expander.Header><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding HomeSessions.Count, StringFormat={}{0} live}" FontSize="10" VerticalAlignment="Center" Margin="6,0,0,0"/><StackPanel Orientation="Horizontal"><ui:Icon Kind="Folder" Margin="0,0,11,0"/><TextBlock Text="Home"/></StackPanel></DockPanel></Expander.Header>
+                                <ItemsControl x:Name="HomeSessionList" Tag="Home" ItemsSource="{Binding HomeSessions}" Style="{StaticResource LiveSessionList}"/>
+                            </Expander>
+                            <Expander x:Name="CloudGroupNav" Style="{StaticResource SessionGroupExpander}" AutomationProperties.Name="Cloud live sessions">
+                                <Expander.Header><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding CloudSessions.Count, StringFormat={}{0} live}" FontSize="10" VerticalAlignment="Center" Margin="6,0,0,0"/><StackPanel Orientation="Horizontal"><ui:Icon Kind="Server" Margin="0,0,11,0"/><TextBlock Text="Cloud"/></StackPanel></DockPanel></Expander.Header>
+                                <ItemsControl x:Name="CloudSessionList" Tag="Cloud" ItemsSource="{Binding CloudSessions}" Style="{StaticResource LiveSessionList}"/>
+                            </Expander>
+                        </StackPanel></ScrollViewer>
+                    </DockPanel>
+                </Border>
+                <Grid Grid.Column="1">
+                    <ContentControl x:Name="PageContent" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                    <Grid x:Name="SessionsContainer" Visibility="Collapsed"/>
+                </Grid>
+            </Grid>
+            <Border x:Name="StatusChrome" Grid.Row="2" Background="{DynamicResource StatusSurface}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="17,0">
+                <DockPanel><TextBlock Text="RDP · SSH · VNC" FontSize="11" Foreground="{DynamicResource Muted}" VerticalAlignment="Center"/><TextBlock x:Name="BrandVersion" DockPanel.Dock="Right" Text="RemoteMachine  0.3.6" ToolTip="{DynamicResource ThemeDescription}" FontSize="11" Foreground="{DynamicResource Muted}" VerticalAlignment="Center"/><TextBlock x:Name="StatusText" Text="Ready" FontSize="11" Foreground="{DynamicResource Muted}" HorizontalAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

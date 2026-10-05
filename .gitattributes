@@ -1,0 +1,9 @@
+* text=auto
+*.png binary
+*.ico binary
+
+src/RemoteHub/VncAssets/novnc/** -text
+src/RemoteHub/TerminalAssets/xterm.js -text
+src/RemoteHub/TerminalAssets/xterm.css -text
+src/RemoteHub/TerminalAssets/addon-fit.js -text
+src/RemoteHub/TerminalAssets/LICENSE.* -text

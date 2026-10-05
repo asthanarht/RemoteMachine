@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\RemoteHub.ico</ApplicationIcon>
+    <AssemblyName>RemoteMachine</AssemblyName>
+    <RootNamespace>RemoteHub</RootNamespace>
+    <Title>RemoteMachine</Title>
+    <Product>RemoteMachine</Product>
+    <Description>RemoteMachine - RDP, SSH and VNC workspace for Windows, Mac and Linux connections</Description>
+    <Version>0.3.6</Version>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\RemoteHub-mark.png;Assets\RemoteHub.ico" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
+    <Content Include="TerminalAssets\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="VncAssets\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Reference Include="Interop.MSTSCLib">
+      <HintPath>..\..\lib\Interop.MSTSCLib.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

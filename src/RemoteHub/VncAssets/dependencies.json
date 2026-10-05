@@ -1,0 +1,18 @@
+{
+  "noVNC": {
+    "version": "1.6.0",
+    "source": "https://github.com/novnc/noVNC/tree/v1.6.0",
+    "archive": "https://github.com/novnc/noVNC/archive/refs/tags/v1.6.0.zip",
+    "archiveSha256": "1D0B3B60FD49A344482EF9FBE7D79A433024AAA5542E43ADE7E7F211BBA2AE47",
+    "license": "MPL-2.0",
+    "files": ["novnc/core", "novnc/vendor/pako", "novnc/LICENSE.txt", "novnc/AUTHORS", "novnc/docs"],
+    "modified": true,
+    "modifications": [
+      {
+        "file": "novnc/core/rfb.js",
+        "description": "RemoteHub 0.3.2: preserve complete mouse-wheel steps and fractional remainders on both axes, distinguish pixel/line/page units, and explicitly reject non-finite or excessive input above 1024 combined steps per event before emitting any pulses. RemoteHub 0.3.3: add validated wheelSensitivity (integer 1-8, default 1), scale normalized wheel distance, and clear pending fractions only when sensitivity changes."
+      }
+    ],
+    "runtimeNetworkDependencies": false
+  }
+}

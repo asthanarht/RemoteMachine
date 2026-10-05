@@ -1,0 +1,13 @@
+{
+  "xterm": {
+    "version": "6.0.0",
+    "javascript": "https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.js",
+    "css": "https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.css",
+    "license": "https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/LICENSE"
+  },
+  "addon-fit": {
+    "version": "0.11.0",
+    "javascript": "https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.js",
+    "license": "https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/LICENSE"
+  }
+}

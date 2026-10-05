@@ -1,0 +1,36 @@
+<Window x:Class="RemoteHub.Focus.FocusPanelWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ui="clr-namespace:RemoteHub.Controls" xmlns:models="clr-namespace:RemoteHub.Models"
+        Title="RemoteMachine session controls" Style="{StaticResource {x:Type Window}}" Width="330" SizeToContent="Height" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" ShowActivated="False">
+    <Border Margin="10" Padding="20" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Line}" BorderThickness="1" CornerRadius="15">
+        <Border.Effect><DropShadowEffect BlurRadius="16" ShadowDepth="4" Opacity=".15"/></Border.Effect>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="660">
+            <StackPanel>
+                <DockPanel Margin="0,0,0,17"><Button DockPanel.Dock="Right" Click="CloseClicked" Padding="4" BorderThickness="0"><ui:Icon Kind="Close" Width="15" Height="15"/></Button><Image Source="{StaticResource AppMark}" Width="24" Height="24" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,9,0"/><TextBlock Text="Session controls" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/></DockPanel>
+                <DockPanel Margin="0,0,0,18"><Border Background="{DynamicResource AccentSoft}" CornerRadius="9" Width="36" Height="36" Margin="0,0,11,0"><ui:Icon Kind="Monitor" Stroke="{DynamicResource Accent}"/></Border><StackPanel VerticalAlignment="Center"><TextBlock x:Name="ComputerName" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="ConnectionState" Style="{StaticResource MutedText}" FontSize="10" Margin="0,5,0,0"/></StackPanel></DockPanel>
+                <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,1" Padding="0,10" Margin="0,0,0,16"><StackPanel>
+                    <Button Style="{StaticResource NavButton}" Tag="Windowed" Click="ActionClicked"><StackPanel Orientation="Horizontal"><ui:Icon Kind="Window" Margin="0,0,11,0"/><TextBlock Text="Back to windowed view"/></StackPanel></Button>
+                    <Button Style="{StaticResource NavButton}" Tag="Minimize" Click="ActionClicked"><StackPanel Orientation="Horizontal"><ui:Icon Kind="Minimize" Margin="0,0,11,0"/><TextBlock Text="Minimize to your desktop"/></StackPanel></Button>
+                </StackPanel></Border>
+                <StackPanel x:Name="VncScrollOptions" Visibility="Collapsed" Margin="0,0,0,18">
+                    <ComboBox x:Name="VncScrollSpeed" ItemsSource="{x:Static models:ConnectionProfile.VncScrollSpeeds}" ItemTemplate="{StaticResource VncScrollSpeedOption}" SelectionChanged="ScrollSpeedChanged" AutomationProperties.Name="VNC scroll speed"/>
+                    <TextBlock Text="Wheel distance, saved for this connection." Style="{StaticResource MutedText}" FontSize="11" TextWrapping="Wrap" Margin="0,7,0,0"/>
+                </StackPanel>
+                <TextBlock Text="Put the handle where you want" FontSize="12" FontWeight="SemiBold"/>
+                <TextBlock Text="Choose an edge, or drag the accent-colored handle." Style="{StaticResource MutedText}" FontSize="10" Margin="0,5,0,10" TextWrapping="Wrap"/>
+                <UniformGrid Columns="4" Margin="-3,0,-3,15">
+                    <Button x:Name="LeftDock" Content="Left" Tag="Left" Click="DockClicked" Margin="3" Padding="5,10" FontSize="10"/>
+                    <Button x:Name="TopDock" Content="Top" Tag="Top" Click="DockClicked" Margin="3" Padding="5,10" FontSize="10"/>
+                    <Button x:Name="RightDock" Content="Right" Tag="Right" Click="DockClicked" Margin="3" Padding="5,10" FontSize="10"/>
+                    <Button x:Name="BottomDock" Content="Bottom" Tag="Bottom" Click="DockClicked" Margin="3" Padding="5,10" FontSize="10"/>
+                </UniformGrid>
+                <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="0,17,0,0">
+                    <StackPanel><CheckBox x:Name="InvisibleToggle" Content="Hide handle (invisible mode)" Checked="InvisibleChanged" Unchecked="InvisibleChanged" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="InvisibleHelp" Text="The handle stays visible unless you turn this on. Your choice is remembered." TextWrapping="Wrap" Style="{StaticResource MutedText}" FontSize="11" LineHeight="18" Margin="0,8,0,13"/></StackPanel>
+                </Border>
+                <TextBlock Text="Ctrl + Alt + Space  ·  Controls at your cursor" Style="{StaticResource MutedText}" FontSize="10" Margin="0,0,0,7"/>
+                <TextBlock Text="Ctrl + Alt + Home  ·  Leave Focus mode" Style="{StaticResource MutedText}" FontSize="10" Margin="0,0,0,17"/>
+                <Button Content="Back to my work  →" Style="{StaticResource PrimaryButton}" Click="CloseClicked"/>
+                <Button Content="Disconnect session" Foreground="{DynamicResource Danger}" Style="{StaticResource TextButton}" Tag="Disconnect" Click="ActionClicked" Margin="0,14,0,0" FontSize="11"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</Window>
