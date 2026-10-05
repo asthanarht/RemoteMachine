@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap rescap">
+  <Identity Name="Asthanarht.RemoteMachine"
+            Publisher="CN=C19936F1-3C8E-421C-9CFD-A8A29FC9142F"
+            Version="0.3.6.0" ProcessorArchitecture="arm64" />
+  <Properties>
+    <DisplayName>RemoteMachine</DisplayName>
+    <PublisherDisplayName>Asthanarht</PublisherDisplayName>
+    <Description>A Windows workspace for RDP, SSH and VNC connections.</Description>
+    <Logo>StoreAssets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Applications>
+    <Application Id="RemoteMachine" Executable="RemoteMachine.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="RemoteMachine"
+                          Description="A Windows workspace for RDP, SSH and VNC connections."
+                          BackgroundColor="transparent"
+                          Square44x44Logo="StoreAssets\Square44x44Logo.png"
+                          Square150x150Logo="StoreAssets\Square150x150Logo.png" />
+    </Application>
+  </Applications>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

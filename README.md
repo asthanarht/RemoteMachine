@@ -50,7 +50,7 @@ RemoteMachine runs on **Windows**. It connects to remote operating systems throu
 
 ## Build and run
 
-Current version: **0.3.6**. Microsoft Store packaging and publication are not included yet.
+Current version: **0.3.6**. MSIX packaging is available; Microsoft Store publication is pending.
 
 ### Requirements
 
@@ -146,6 +146,18 @@ dotnet run --project .\tools\CaptureScreenshots\CaptureScreenshots.csproj --conf
 The capture tool never captures the Windows desktop or another app. It renders only its own preview window and owned controls, substitutes a fictional settings path, and closes when finished.
 
 For architecture, protocol details, testing boundaries, and implementation history, see the [technical guide](docs/guide.md).
+
+### Microsoft Store package
+
+```powershell
+.\Build-Store.ps1
+```
+
+This restores pinned Windows SDK packaging tools and builds self-contained x64 and ARM64 MSIX packages plus a bundle under `artifacts\store\<version>`. It uses the Store-assigned `Asthanarht.RemoteMachine` identity, preserves the supplied icon, and excludes development self-test implementations and command-line preview/test modes from Store builds. It does not modify the installed desktop app or its data.
+
+The output is unsigned for submission to Microsoft Store, which handles production signing. It is not a signed sideload installer. Packaged installation, dependencies, and Store certification must still be verified; producing the bundle does not mean the app is published.
+
+See the [privacy policy](docs/privacy.md) for local data handling and connection-security details.
 
 ## Third-party components
 

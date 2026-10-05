@@ -21,15 +21,29 @@ public partial class App : Application
         };
         try
         {
+#if STORE_BUILD
+            if (e.Args.Any(argument => argument is "--self-test" or "--interaction-test" or "--vnc-performance-test" or "--design-preview" or "--focus-preview"))
+            {
+                MessageBox.Show("Development previews and test modes are not included in the Store build.", "RemoteMachine",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                Shutdown(2);
+                return;
+            }
+            bool selfTest = false;
+            bool designPreview = false;
+#else
             bool performanceTest = e.Args.Contains("--vnc-performance-test");
             bool selfTest = e.Args.Contains("--self-test") || e.Args.Contains("--interaction-test") || performanceTest;
-            var settingsStore = selfTest || e.Args.Contains("--design-preview") ? null : new AppSettingsStore();
+            bool designPreview = e.Args.Contains("--design-preview");
+#endif
+            var settingsStore = selfTest || designPreview ? null : new AppSettingsStore();
             var settings = settingsStore?.Load() ?? new AppSettings();
             if (settingsStore is not null && !File.Exists(settingsStore.FilePath)) settingsStore.Save(settings);
             Theme = new SystemTheme(this, settings, settingsStore);
-            var window = new MainWindow(e.Args.Contains("--design-preview"), selfTest);
+            var window = new MainWindow(designPreview, selfTest);
             MainWindow = window;
             window.Show();
+#if !STORE_BUILD
             if (e.Args.Contains("--focus-preview")) window.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() => OpenPreviewFocus(window)));
             if (selfTest) window.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(async () =>
             {
@@ -37,6 +51,7 @@ public partial class App : Application
                     await NativeSelfTest.Run(window, e.Args.Contains("--interaction-test"));
                 Shutdown(exitCode);
             }));
+#endif
             AppLog.Write("app-start", details: new { product = "RemoteMachine", version = "0.3.6", architecture = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString(), theme = Theme.Current.Name, themePreference = Theme.Preference.ToString() });
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException or InvalidDataException)
@@ -50,6 +65,7 @@ public partial class App : Application
         Theme?.Dispose();
         base.OnExit(e);
     }
+#if !STORE_BUILD
     private static async void OpenPreviewFocus(MainWindow window)
     {
         if (!window.IsDesignPreview) return;
@@ -57,4 +73,5 @@ public partial class App : Application
         await Task.Delay(400);
         if (window.ActiveSession is { } session) window.EnterFocus(session);
     }
+#endif
 }

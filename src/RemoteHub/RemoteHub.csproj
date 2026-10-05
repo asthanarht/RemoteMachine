@@ -18,6 +18,14 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(StoreBuild)' == 'true'">
+    <DefineConstants>$(DefineConstants);STORE_BUILD</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(StoreBuild)' == 'true'">
+    <Compile Remove="Services\*SelfTest.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Resource Include="Assets\RemoteHub-mark.png;Assets\RemoteHub.ico" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
